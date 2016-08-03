@@ -1,0 +1,45 @@
+package manoj.jek.go.com.contactsdemo.ui.models;
+
+public class Contact {
+
+    private String first_name;
+    private String last_name;
+    private String phone_number;
+    private String _profile_pic;
+    private String email;
+    private int id;
+
+    public Contact(int id, String firstName, String lastName, String email,
+                   String number, String profilePicUrl) {
+        this.email = email;
+        this.id = id;
+        first_name = firstName;
+        last_name = lastName;
+        this.phone_number = number;
+        _profile_pic = profilePicUrl;
+    }
+
+    public String getFirstName() {
+        return first_name;
+    }
+
+    public String getLastName() {
+        return last_name;
+    }
+
+    public String getNumber() {
+        return phone_number;
+    }
+
+    public String getProfilePictureUrl() {
+        return _profile_pic;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public int getId() {
+        return id;
+    }
+}
