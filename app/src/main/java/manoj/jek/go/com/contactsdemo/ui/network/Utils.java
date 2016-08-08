@@ -24,4 +24,16 @@ public class Utils {
         httpClient.addInterceptor(logging);  //
         return httpClient;
     }
+
+    public static String capitalizeName(String firstName, String lastName)
+    {
+        String rawName = firstName + " " + lastName;
+        String output = "";
+        for(String part: rawName.split(" "))
+        {
+            part = part.substring(0,1).toUpperCase() + part.substring(1, part.length()).toLowerCase();
+            output = output + part + " ";
+        }
+        return output;
+    }
 }

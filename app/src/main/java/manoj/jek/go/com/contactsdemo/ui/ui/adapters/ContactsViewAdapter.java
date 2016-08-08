@@ -10,15 +10,17 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import manoj.jek.go.com.contactsdemo.R;
-import manoj.jek.go.com.contactsdemo.ui.models.ContactSummary;
+import manoj.jek.go.com.contactsdemo.ui.models.Contact;
+import manoj.jek.go.com.contactsdemo.ui.network.Utils;
 
 public class ContactsViewAdapter extends RecyclerView.Adapter<ContactsViewAdapter.ContactsViewHolder> {
-    private List<ContactSummary> _contactSummaries;
+    private List<Contact> _contactSummaries;
     private Context _context;
 
     class ContactsViewHolder extends RecyclerView.ViewHolder{
@@ -26,6 +28,8 @@ public class ContactsViewAdapter extends RecyclerView.Adapter<ContactsViewAdapte
         public ImageView _picView;
         @BindView(R.id.contact_summary_name)
         public TextView _nameView;
+        @BindView(R.id.contact_charecter)
+        public TextView _charecterView;
 
         public ContactsViewHolder(View itemView) {
             super(itemView);
@@ -33,7 +37,8 @@ public class ContactsViewAdapter extends RecyclerView.Adapter<ContactsViewAdapte
         }
     }
 
-    public ContactsViewAdapter(Context context, List<ContactSummary> contactSummaryList) {
+    public ContactsViewAdapter(Context context, List<Contact> contactSummaryList) {
+        Collections.sort(contactSummaryList);
         _contactSummaries = contactSummaryList;
         _context = context;
     }
@@ -45,9 +50,14 @@ public class ContactsViewAdapter extends RecyclerView.Adapter<ContactsViewAdapte
 
     @Override
     public void onBindViewHolder(ContactsViewHolder holder, int position) {
-        ContactSummary summary = _contactSummaries.get(position);
-        holder._nameView.setText(summary.getFirst_name()+" "+summary.getLast_name());
-        Glide.with(_context).load(summary.getProfile_pic()).placeholder(R.drawable.contacts_placeholder).into(holder._picView);
+        Contact contact = _contactSummaries.get(position);
+        holder._nameView.setText(Utils.capitalizeName(contact.getFirstName(), contact.getLastName()));
+        Glide.with(_context).load(contact.getProfilePictureUrl()).placeholder(R.drawable.contacts_placeholder).into(holder._picView);
+        if(shouldShowChar(position)) {
+            holder._charecterView.setText(getStartingChar(contact).toString());
+        } else {
+            holder._charecterView.setText("");
+        }
     }
 
     @Override
@@ -55,8 +65,23 @@ public class ContactsViewAdapter extends RecyclerView.Adapter<ContactsViewAdapte
         return _contactSummaries.size();
     }
 
-    public void updateContacts(List<ContactSummary> summaryList) {
+    public void updateContacts(List<Contact> summaryList) {
+        Collections.sort(summaryList);
         _contactSummaries = summaryList;
         notifyDataSetChanged();
+    }
+
+    private Character getStartingChar(Contact contact) {
+        return contact.getFirstName().toUpperCase().charAt(0);
+    }
+
+    private boolean shouldShowChar(int position)
+    {
+        Contact contact = _contactSummaries.get(position);
+        if(position == 0 || !getStartingChar(contact).equals(getStartingChar(_contactSummaries.get(position-1)))) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

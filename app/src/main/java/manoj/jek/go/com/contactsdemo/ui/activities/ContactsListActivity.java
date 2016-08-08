@@ -34,7 +34,7 @@ import rx.schedulers.Schedulers;
 public class ContactsListActivity extends AppCompatActivity {
 
     private ContactsService _restClient;
-    private Single<List<ContactSummary>> _single;
+    private Single<List<Contact>> _single;
     private Subscription _subscription;
     private ContactsViewAdapter _adapter;
 
@@ -49,14 +49,14 @@ public class ContactsListActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         _restClient = Utils.getContactsService();
-        _single = Single.fromCallable(new Callable<List<ContactSummary>>() {
+        _single = Single.fromCallable(new Callable<List<Contact>>() {
             @Override
-            public List<ContactSummary> call() throws Exception {
+            public List<Contact> call() throws Exception {
                 return _restClient.getAllContacts().execute().body();
             }
         });
 
-        _adapter = new ContactsViewAdapter(this, new ArrayList<ContactSummary>());
+        _adapter = new ContactsViewAdapter(this, new ArrayList<Contact>());
         _recyclerView.setAdapter(_adapter);
         //Need this to get recylcer view to work. Android is frustrating.
         _recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -74,10 +74,10 @@ public class ContactsListActivity extends AppCompatActivity {
         super.onStart();
         _subscription = _single.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SingleSubscriber<List<ContactSummary>>() {
+                .subscribe(new SingleSubscriber<List<Contact>>() {
                     @Override
-                    public void onSuccess(List<ContactSummary> value) {
-                        Toast.makeText(ContactsListActivity.this, "got success!!", Toast.LENGTH_LONG).show();
+                    public void onSuccess(List<Contact> value) {
+                        findViewById(R.id.progress_wheel).setVisibility(View.GONE);
                         _recyclerView.setAdapter(new ContactsViewAdapter(ContactsListActivity.this, value));
                         _recyclerView.invalidate();
                     }

@@ -1,6 +1,6 @@
 package manoj.jek.go.com.contactsdemo.ui.models;
 
-public class Contact {
+public class Contact implements Comparable{
 
     private String first_name;
     private String last_name;
@@ -51,5 +51,22 @@ public class Contact {
 
     public int getId() {
         return id;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if(o == null || !(o instanceof Contact) ) {
+            return -1;
+        }
+        Contact that = (Contact) o;
+        if(this.getIsFavorite() && !that.getIsFavorite()) {
+            return -1;
+        } else if(!this.getIsFavorite() && that.getIsFavorite()) {
+            return 1;
+        } else {
+            String thisName = (this.getFirstName() + this.getLastName()).toLowerCase();
+            String thatName = (that.getFirstName() + that.getLastName()).toLowerCase();
+            return thisName.compareTo(thatName);
+        }
     }
 }
