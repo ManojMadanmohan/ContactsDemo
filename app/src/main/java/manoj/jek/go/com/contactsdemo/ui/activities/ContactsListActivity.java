@@ -27,6 +27,7 @@ import manoj.jek.go.com.contactsdemo.ui.network.Utils;
 import manoj.jek.go.com.contactsdemo.ui.ui.adapters.ContactsViewAdapter;
 import rx.Single;
 import rx.SingleSubscriber;
+import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;

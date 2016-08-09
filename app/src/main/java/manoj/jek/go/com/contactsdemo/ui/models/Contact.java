@@ -1,6 +1,9 @@
 package manoj.jek.go.com.contactsdemo.ui.models;
 
-public class Contact implements Comparable{
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Contact implements Comparable, Parcelable{
 
     private String first_name;
     private String last_name;
@@ -20,6 +23,28 @@ public class Contact implements Comparable{
         _profile_pic = profilePicUrl;
         _isFavorite = isFav;
     }
+
+    protected Contact(Parcel in) {
+        first_name = in.readString();
+        last_name = in.readString();
+        phone_number = in.readString();
+        _profile_pic = in.readString();
+        email = in.readString();
+        id = in.readInt();
+        _isFavorite = in.readByte() != 0;
+    }
+
+    public static final Creator<Contact> CREATOR = new Creator<Contact>() {
+        @Override
+        public Contact createFromParcel(Parcel in) {
+            return new Contact(in);
+        }
+
+        @Override
+        public Contact[] newArray(int size) {
+            return new Contact[size];
+        }
+    };
 
     public String getFirstName() {
         return first_name;
@@ -68,5 +93,21 @@ public class Contact implements Comparable{
             String thatName = (that.getFirstName() + that.getLastName()).toLowerCase();
             return thisName.compareTo(thatName);
         }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(first_name);
+        parcel.writeString(last_name);
+        parcel.writeString(phone_number);
+        parcel.writeString(_profile_pic);
+        parcel.writeString(email);
+        parcel.writeInt(id);
+        parcel.writeByte((byte) (_isFavorite ? 1 : 0));
     }
 }

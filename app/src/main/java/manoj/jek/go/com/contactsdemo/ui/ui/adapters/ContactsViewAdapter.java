@@ -20,8 +20,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import manoj.jek.go.com.contactsdemo.R;
+import manoj.jek.go.com.contactsdemo.ui.activities.ContactInfoActivity;
+import manoj.jek.go.com.contactsdemo.ui.activities.ContactsListActivity;
 import manoj.jek.go.com.contactsdemo.ui.models.Contact;
 import manoj.jek.go.com.contactsdemo.ui.network.Utils;
+import rx.Observable;
+import rx.subjects.PublishSubject;
 
 public class ContactsViewAdapter extends RecyclerView.Adapter<ContactsViewAdapter.ContactsViewHolder> {
     private List<Contact> _contactSummaries;
@@ -34,6 +38,8 @@ public class ContactsViewAdapter extends RecyclerView.Adapter<ContactsViewAdapte
         public TextView _nameView;
         @BindView(R.id.contact_charecter)
         public TextView _charecterView;
+        @BindView(R.id.contact_summary_root)
+        public View _rootView;
 
         public ContactsViewHolder(View itemView) {
             super(itemView);
@@ -54,10 +60,16 @@ public class ContactsViewAdapter extends RecyclerView.Adapter<ContactsViewAdapte
 
     @Override
     public void onBindViewHolder(ContactsViewHolder holder, int position) {
-        Contact contact = _contactSummaries.get(position);
+        final Contact contact = _contactSummaries.get(position);
         holder._nameView.setText(Utils.capitalizeName(contact.getFirstName(), contact.getLastName()));
         Glide.with(_context).load(contact.getProfilePictureUrl()).placeholder(R.drawable.contacts_placeholder).into(holder._picView);
         holder._charecterView.setText(getCharecterToShow(position));
+        holder._rootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ContactInfoActivity.launch(contact,  _context);
+            }
+        });
     }
 
     @Override
@@ -88,10 +100,10 @@ public class ContactsViewAdapter extends RecyclerView.Adapter<ContactsViewAdapte
             }
         }
     }
-    
+
     private SpannableString getStarIcon() {
         SpannableString ss = new SpannableString("");
-        Drawable d = _context.getResources().getDrawable(R.drawable.icon32);
+        Drawable d = _context.getResources().getDrawable(R.drawable.ic_star_rate);
         d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
         ImageSpan span = new ImageSpan(d, ImageSpan.ALIGN_BASELINE);
         ss.setSpan(span, 0, 3, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
