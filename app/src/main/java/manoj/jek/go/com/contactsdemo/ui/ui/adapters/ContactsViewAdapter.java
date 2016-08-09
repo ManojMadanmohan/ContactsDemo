@@ -1,7 +1,11 @@
 package manoj.jek.go.com.contactsdemo.ui.ui.adapters;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,11 +57,7 @@ public class ContactsViewAdapter extends RecyclerView.Adapter<ContactsViewAdapte
         Contact contact = _contactSummaries.get(position);
         holder._nameView.setText(Utils.capitalizeName(contact.getFirstName(), contact.getLastName()));
         Glide.with(_context).load(contact.getProfilePictureUrl()).placeholder(R.drawable.contacts_placeholder).into(holder._picView);
-        if(shouldShowChar(position)) {
-            holder._charecterView.setText(getStartingChar(contact).toString());
-        } else {
-            holder._charecterView.setText("");
-        }
+        holder._charecterView.setText(getCharecterToShow(position));
     }
 
     @Override
@@ -71,17 +71,30 @@ public class ContactsViewAdapter extends RecyclerView.Adapter<ContactsViewAdapte
         notifyDataSetChanged();
     }
 
-    private Character getStartingChar(Contact contact) {
-        return contact.getFirstName().toUpperCase().charAt(0);
+    private String getStartingChar(Contact contact) {
+        return String.valueOf(contact.getFirstName().toUpperCase().charAt(0));
     }
 
-    private boolean shouldShowChar(int position)
-    {
+    private CharSequence getCharecterToShow(int position) {
         Contact contact = _contactSummaries.get(position);
-        if(position == 0 || !getStartingChar(contact).equals(getStartingChar(_contactSummaries.get(position-1)))) {
-            return true;
+        if(position == 0) {
+            return (contact.getIsFavorite() ? "star" : getStartingChar(contact));
         } else {
-            return false;
+            Contact prevContact = _contactSummaries.get(position - 1);
+            if(!getStartingChar(contact).equals(getStartingChar(prevContact))) {
+                return getStartingChar(contact);
+            } else {
+                return "";
+            }
         }
+    }
+    
+    private SpannableString getStarIcon() {
+        SpannableString ss = new SpannableString("");
+        Drawable d = _context.getResources().getDrawable(R.drawable.icon32);
+        d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
+        ImageSpan span = new ImageSpan(d, ImageSpan.ALIGN_BASELINE);
+        ss.setSpan(span, 0, 3, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+        return ss;
     }
 }
