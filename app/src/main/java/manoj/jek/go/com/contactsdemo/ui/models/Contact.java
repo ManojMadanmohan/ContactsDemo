@@ -10,13 +10,19 @@ import com.activeandroid.annotation.Table;
 @Table(name = "Contacts")
 public class Contact extends Model implements Comparable, Parcelable{
 
+    @Column(name="fname")
     private String first_name;
+    @Column(name="lname")
     private String last_name;
+    @Column(name="phone")
     private String phone_number;
+    @Column(name="picture")
     private String _profile_pic;
+    @Column(name="email")
     private String email;
     @Column(name="remoteId", index = true, unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
     private int id;
+    @Column(name="favorite")
     private boolean _isFavorite;
 
     //No- args constructor needed for GSON
