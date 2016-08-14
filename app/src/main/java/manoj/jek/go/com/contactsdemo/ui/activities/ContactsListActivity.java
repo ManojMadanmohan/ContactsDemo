@@ -12,6 +12,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.activeandroid.ActiveAndroid;
+import com.activeandroid.query.Select;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observer;
@@ -53,7 +56,13 @@ public class ContactsListActivity extends AppCompatActivity {
         _single = Single.fromCallable(new Callable<List<Contact>>() {
             @Override
             public List<Contact> call() throws Exception {
-                return _restClient.getAllContacts().execute().body();
+                if(Utils.isNetworkAvailable(ContactsListActivity.this)) {
+                    List<Contact> contacts = _restClient.getAllContacts().execute().body();
+                    save(contacts);
+                    return contacts;
+                } else {
+                    return new Select().from(Contact.class).execute();
+                }
             }
         });
 
@@ -61,18 +70,10 @@ public class ContactsListActivity extends AppCompatActivity {
         _recyclerView.setAdapter(_adapter);
         //Need this to get recylcer view to work. Android is frustrating.
         _recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        initSubscription();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_contacts_list, menu);
-        return true;
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
+    private void initSubscription() {
         _subscription = _single.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleSubscriber<List<Contact>>() {
@@ -86,8 +87,21 @@ public class ContactsListActivity extends AppCompatActivity {
                     @Override
                     public void onError(Throwable error) {
                         Toast.makeText(ContactsListActivity.this, "got error!!", Toast.LENGTH_LONG).show();
+                        error.printStackTrace();
                     }
                 });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_contacts_list, menu);
+        return true;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     @Override
@@ -109,5 +123,11 @@ public class ContactsListActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void save(List<Contact> contacts) {
+            for(Contact contact: contacts) {
+                contact.save();
+            }
     }
 }

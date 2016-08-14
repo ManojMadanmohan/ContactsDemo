@@ -13,6 +13,7 @@
         android:layout_height="?attr/actionBarSize"
         style="@style/ToolBarStyle.Event"
         android:title="@string/list_title"
+        android:elevation="8dp"
         android:background="?attr/colorPrimary"
         app:popupTheme="@style/AppTheme.PopupOverlay" />
 

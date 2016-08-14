@@ -1,6 +1,10 @@
 package manoj.jek.go.com.contactsdemo.ui.network;
 
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 
@@ -27,6 +31,10 @@ public class Utils {
 
     public static String capitalizeName(String firstName, String lastName)
     {
+        if(firstName == null && lastName == null)
+        {
+            return " - ";
+        }
         String rawName = firstName + " " + lastName;
         String output = "";
         for(String part: rawName.split(" "))
@@ -35,5 +43,12 @@ public class Utils {
             output = output + part + " ";
         }
         return output;
+    }
+
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

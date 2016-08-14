@@ -3,18 +3,30 @@ package manoj.jek.go.com.contactsdemo.ui.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Contact implements Comparable, Parcelable{
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
+
+@Table(name = "Contacts")
+public class Contact extends Model implements Comparable, Parcelable{
 
     private String first_name;
     private String last_name;
     private String phone_number;
     private String _profile_pic;
     private String email;
+    @Column(name="remoteId", index = true, unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
     private int id;
     private boolean _isFavorite;
 
+    //No- args constructor needed for GSON
+    public Contact() {
+        super();
+    }
+
     public Contact(int id, String firstName, String lastName, String email,
                    String number, String profilePicUrl, boolean isFav) {
+        super();
         this.email = email;
         this.id = id;
         first_name = firstName;
@@ -74,7 +86,7 @@ public class Contact implements Comparable, Parcelable{
         return _isFavorite;
     }
 
-    public int getId() {
+    public int getRemoteId() {
         return id;
     }
 
