@@ -90,7 +90,7 @@ public class ContactsViewAdapter extends RecyclerView.Adapter<ContactsViewAdapte
     private CharSequence getCharecterToShow(int position) {
         Contact contact = _contactSummaries.get(position);
         if(position == 0) {
-            return (contact.getIsFavorite() ? "star" : getStartingChar(contact));
+            return (contact.getIsFavorite() ? getStarIcon() : getStartingChar(contact));
         } else {
             Contact prevContact = _contactSummaries.get(position - 1);
             if(!getStartingChar(contact).equals(getStartingChar(prevContact))) {
