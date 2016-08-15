@@ -20,6 +20,7 @@ import java.util.concurrent.Callable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import manoj.jek.go.com.contactsdemo.R;
+import manoj.jek.go.com.contactsdemo.ui.features.ContactsFeature;
 import manoj.jek.go.com.contactsdemo.ui.models.Contact;
 import manoj.jek.go.com.contactsdemo.ui.network.Utils;
 import rx.Observable;
@@ -75,13 +76,7 @@ public class ContactInfoActivity extends AppCompatActivity {
         _fetchObservable = Single.fromCallable(new Callable<Contact>() {
             @Override
             public Contact call() throws Exception {
-                if(Utils.isNetworkAvailable(ContactInfoActivity.this)) {
-                    Contact contact = Utils.getContactsService().getContact(String.valueOf(id)).execute().body();
-                    contact.save();
-                    return contact;
-                } else {
-                    return new Select().from(Contact.class).where("remoteId = ?",_contact.getRemoteId()).executeSingle();
-                }
+                return ContactsFeature.getInstance().fetchContactSync(ContactInfoActivity.this, id);
             }
         });
     }
@@ -90,9 +85,7 @@ public class ContactInfoActivity extends AppCompatActivity {
         return Single.fromCallable(new Callable<Contact>() {
             @Override
             public Contact call() throws Exception {
-                Contact contactUpdated = Utils.getContactsService().updateContact(String.valueOf(contact.getRemoteId()), contact).execute().body();
-                contactUpdated.save();
-                return contactUpdated;
+                return ContactsFeature.getInstance().updateContact(contact);
             }
         });
     }
@@ -111,7 +104,7 @@ public class ContactInfoActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(Throwable error) {
-                        //handle
+                        Toast.makeText(ContactInfoActivity.this, "Something went wrong",Toast.LENGTH_LONG).show();
                     }
                 });
     }

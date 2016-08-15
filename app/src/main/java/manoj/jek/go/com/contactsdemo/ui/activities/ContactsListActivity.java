@@ -24,6 +24,7 @@ import java.util.concurrent.Callable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import manoj.jek.go.com.contactsdemo.R;
+import manoj.jek.go.com.contactsdemo.ui.features.ContactsFeature;
 import manoj.jek.go.com.contactsdemo.ui.models.Contact;
 import manoj.jek.go.com.contactsdemo.ui.models.ContactSummary;
 import manoj.jek.go.com.contactsdemo.ui.network.ContactsService;
@@ -57,13 +58,7 @@ public class ContactsListActivity extends AppCompatActivity {
         _single = Single.fromCallable(new Callable<List<Contact>>() {
             @Override
             public List<Contact> call() throws Exception {
-                if(Utils.isNetworkAvailable(ContactsListActivity.this)) {
-                    List<Contact> contacts = _restClient.getAllContacts().execute().body();
-                    save(contacts);
-                    return contacts;
-                } else {
-                    return new Select().from(Contact.class).execute();
-                }
+                return ContactsFeature.getInstance().fetchAllContactsSync(ContactsListActivity.this);
             }
         });
 
@@ -110,24 +105,4 @@ public class ContactsListActivity extends AppCompatActivity {
         super.onStop();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void save(List<Contact> contacts) {
-            for(Contact contact: contacts) {
-                contact.save();
-            }
-    }
 }
