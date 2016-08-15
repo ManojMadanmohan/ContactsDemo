@@ -33,6 +33,7 @@
             android:value="manoj.jek.go.com.contactsdemo.ui.models.Contact" />
 
         <activity android:name=".ui.activities.NewContactActivity"></activity>
+        <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
     </application>
 
 </manifest>
