@@ -30,7 +30,6 @@
             <FrameLayout
                 android:layout_width="144dp"
                 android:layout_height="144dp"
-                android:layout_marginTop="32dp"
                 android:id="@+id/new_contact_pic_layout"
                 android:layout_centerHorizontal="true">
 
