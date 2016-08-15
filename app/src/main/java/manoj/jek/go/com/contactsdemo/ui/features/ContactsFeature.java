@@ -5,6 +5,7 @@ import android.content.Context;
 import com.activeandroid.query.Select;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import manoj.jek.go.com.contactsdemo.ui.models.Contact;
@@ -26,11 +27,14 @@ public class ContactsFeature {
     }
 
     public List<Contact> fetchAllContactsSync(Context context) throws IOException {
+        List<Contact> contacts;
         if(Utils.isNetworkAvailable(context)) {
-            return fetchAllContactsFromServer();
+            contacts = fetchAllContactsFromServer();
         } else {
-            return new Select().from(Contact.class).execute();
+            contacts = new Select().from(Contact.class).execute();
         }
+        Collections.sort(contacts);
+        return contacts;
     }
 
     public Contact fetchContactSync(Context context, int contactId) throws IOException {
