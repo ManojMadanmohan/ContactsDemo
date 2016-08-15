@@ -16,6 +16,8 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import manoj.jek.go.com.contactsdemo.R;
 import manoj.jek.go.com.contactsdemo.ui.models.Contact;
 import manoj.jek.go.com.contactsdemo.ui.network.Utils;
@@ -31,6 +33,17 @@ public class ContactInfoActivity extends AppCompatActivity {
     private Single<Contact> _single;
     private Subscription _subscription;
 
+    @BindView(R.id.contact_info_name)
+    TextView _nameView;
+    @BindView(R.id.contact_info_phone)
+    TextView _numberView;
+    @BindView(R.id.contact_info_email)
+    TextView _emailView;
+    @BindView(R.id.contact_info_fav)
+    ImageView _favView;
+    @BindView(R.id.contact_info_pic)
+    ImageView _pictureView;
+
     public static final String KEY_CONTACT_EXTRA = "contact";
 
     public static void launch(Contact contact, Context context) {
@@ -43,6 +56,7 @@ public class ContactInfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_info);
+        ButterKnife.bind(this);
         _contact = (Contact) getIntent().getParcelableExtra(KEY_CONTACT_EXTRA);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -87,15 +101,42 @@ public class ContactInfoActivity extends AppCompatActivity {
     private void setupView() {
         findViewById(R.id.progress_wheel).setVisibility(View.GONE);
         findViewById(R.id.contact_info_layout).setVisibility(View.VISIBLE);
-        setTextViewText(R.id.contact_info_name, Utils.capitalizeName(_contact.getFirstName(), _contact.getLastName()));
-        setTextViewText(R.id.contact_info_email, _contact.getEmail());
-        setTextViewText(R.id.contact_info_phone, _contact.getNumber());
+        setTextViewText(_nameView, Utils.capitalizeName(_contact.getFirstName(), _contact.getLastName()));
+        setTextViewText(_emailView, _contact.getEmail());
+        setTextViewText(_numberView, _contact.getNumber());
+        setListeners();
         Glide.with(this).load(_contact.getProfilePictureUrl()).placeholder(R.drawable.contacts_placeholder)
-        .into((ImageView) findViewById(R.id.contact_info_pic));
+        .into((ImageView) _pictureView);
     }
 
-    private void setTextViewText(int resourceId, String text) {
-        TextView textView = (TextView) findViewById(resourceId);
+    private void setListeners() {
+        _numberView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //call number
+            }
+        });
+        _emailView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //email user
+            }
+        });
+        _favView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //mark fav
+            }
+        });
+        _pictureView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //zoom picture, LATER
+            }
+        });
+    }
+
+    private void setTextViewText(TextView textView, String text) {
         if(text == null)
         {
             text = " - ";

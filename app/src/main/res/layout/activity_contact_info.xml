@@ -57,7 +57,7 @@
                 android:layout_marginBottom="4dp"
                 >
                 <ImageView
-                    android:id="@+id/fav_icon"
+                    android:id="@+id/contact_info_fav"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_gravity="center_vertical"
