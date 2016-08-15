@@ -1,5 +1,7 @@
 package manoj.jek.go.com.contactsdemo.ui.network;
 
+import com.google.gson.GsonBuilder;
+
 import java.util.List;
 import java.util.logging.Level;
 
@@ -21,7 +23,7 @@ public interface ContactsService {
 
     public static final Retrofit retrofit = new Retrofit.Builder()
             .baseUrl("http://gojek-contacts-app.herokuapp.com/")
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create()))
             .client(Utils.getBuilder().build())
             .build();
 

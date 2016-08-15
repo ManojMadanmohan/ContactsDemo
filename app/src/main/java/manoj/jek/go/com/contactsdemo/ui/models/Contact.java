@@ -6,22 +6,30 @@ import android.os.Parcelable;
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
+import com.google.gson.annotations.Expose;
 
 @Table(name = "Contacts")
 public class Contact extends Model implements Comparable, Parcelable{
 
+    @Expose
     @Column(name="fname")
     private String first_name;
+    @Expose
     @Column(name="lname")
     private String last_name;
+    @Expose
     @Column(name="phone")
     private String phone_number;
+    @Expose
     @Column(name="picture")
     private String _profile_pic;
+    @Expose
     @Column(name="email")
     private String email;
+    @Expose
     @Column(name="remoteId", index = true, unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
     private int id;
+    @Expose
     @Column(name="favorite")
     private boolean _isFavorite;
 
