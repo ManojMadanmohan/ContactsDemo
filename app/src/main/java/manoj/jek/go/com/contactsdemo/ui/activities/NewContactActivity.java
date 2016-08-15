@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -41,13 +42,13 @@ public class NewContactActivity extends AppCompatActivity {
     @BindView(R.id.new_contact_pic_layout)
     View _pictureLayout;
     @BindView(R.id.new_contact_first_name)
-    TextView _firstNameView;
+    TextInputLayout _firstNameView;
     @BindView(R.id.new_contact_last_name)
-    TextView _lastNameView;
+    TextInputLayout _lastNameView;
     @BindView(R.id.new_contact_email)
-    TextView _emailView;
+    TextInputLayout _emailView;
     @BindView(R.id.new_contact_number)
-    TextView _phoneView;
+    TextInputLayout _phoneView;
     @BindView(R.id.new_contact_save)
     Button _saveButton;
 
