@@ -31,7 +31,7 @@ public class Contact extends Model implements Comparable, Parcelable{
     private int id;
     @Expose
     @Column(name="favorite")
-    private boolean _favorite;
+    private boolean favorite;
 
     //No- args constructor needed for GSON
     public Contact() {
@@ -47,7 +47,7 @@ public class Contact extends Model implements Comparable, Parcelable{
         last_name = lastName;
         this.phone_number = number;
         _profile_pic = profilePicUrl;
-        _favorite = isFav;
+        favorite = isFav;
     }
 
     protected Contact(Parcel in) {
@@ -57,7 +57,7 @@ public class Contact extends Model implements Comparable, Parcelable{
         _profile_pic = in.readString();
         email = in.readString();
         id = in.readInt();
-        _favorite = in.readByte() != 0;
+        favorite = in.readByte() != 0;
     }
 
     public static final Creator<Contact> CREATOR = new Creator<Contact>() {
@@ -93,11 +93,11 @@ public class Contact extends Model implements Comparable, Parcelable{
     }
 
     public void makeFavorite() {
-        _favorite = true;
+        favorite = true;
     }
 
     public boolean  getIsFavorite() {
-        return _favorite;
+        return favorite;
     }
 
     public int getRemoteId() {
@@ -134,6 +134,6 @@ public class Contact extends Model implements Comparable, Parcelable{
         parcel.writeString(_profile_pic);
         parcel.writeString(email);
         parcel.writeInt(id);
-        parcel.writeByte((byte) (_favorite ? 1 : 0));
+        parcel.writeByte((byte) (favorite ? 1 : 0));
     }
 }
