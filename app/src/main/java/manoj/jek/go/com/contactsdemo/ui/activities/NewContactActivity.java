@@ -40,6 +40,7 @@ import java.util.concurrent.Callable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import manoj.jek.go.com.contactsdemo.R;
+import manoj.jek.go.com.contactsdemo.ui.features.ContactsFeature;
 import manoj.jek.go.com.contactsdemo.ui.models.Contact;
 import manoj.jek.go.com.contactsdemo.ui.network.Utils;
 import rx.Single;
@@ -64,6 +65,12 @@ public class NewContactActivity extends AppCompatActivity {
     TextInputLayout _phoneView;
     @BindView(R.id.new_contact_save)
     Button _saveButton;
+    @BindView(R.id.error_view)
+    View _errorView;
+    @BindView(R.id.retry)
+    Button _retryButton;
+    @BindView(R.id.new_contact_layout)
+    View _contactLayout;
 
     private Uri _imageUri;
     private Bitmap _bitmap;
@@ -268,12 +275,11 @@ public class NewContactActivity extends AppCompatActivity {
 
             @Override
             public Contact call() throws Exception {
-                Contact finalContact = Utils.getContactsService().addContact(contact).execute().body();
-                finalContact.save();
+                Contact finalContact = ContactsFeature.getInstance().addContact(contact);
                 return finalContact;
             }
         });
-
+        _contactLayout.setVisibility(View.GONE);
         findViewById(R.id.progress_wheel).setVisibility(View.VISIBLE);
         single.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -282,17 +288,30 @@ public class NewContactActivity extends AppCompatActivity {
                     public void onSuccess(Contact value) {
                         Toast.makeText(NewContactActivity.this, "Successfully uploaded!", Toast.LENGTH_LONG).show();
                         findViewById(R.id.progress_wheel).setVisibility(View.GONE);
+                        ContactInfoActivity.launch(value, NewContactActivity.this);
+                        finish();
                     }
 
                     @Override
                     public void onError(Throwable error) {
                         error.printStackTrace();
-                        Toast.makeText(NewContactActivity.this, "Error while adding contact!", Toast.LENGTH_LONG).show();
                         findViewById(R.id.progress_wheel).setVisibility(View.GONE);
+                        showErrorView();
                     }
                 });
     }
 
+    private void showErrorView() {
+        _errorView.setVisibility(View.VISIBLE);
+        _contactLayout.setVisibility(View.GONE);
+        _retryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                _contactLayout.setVisibility(View.VISIBLE);
+                _errorView.setVisibility(View.GONE);
+            }
+        });
+    }
 
 
 }
