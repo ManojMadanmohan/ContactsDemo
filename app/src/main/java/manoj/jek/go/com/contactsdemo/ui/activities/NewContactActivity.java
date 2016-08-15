@@ -24,18 +24,21 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.soundcloud.android.crop.Crop;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import manoj.jek.go.com.contactsdemo.R;
 
-import static android.app.Activity.RESULT_OK;
 
 public class NewContactActivity extends AppCompatActivity {
 
@@ -104,11 +107,7 @@ public class NewContactActivity extends AppCompatActivity {
     private void openImageIntent() {
 
         // Determine Uri of camera image to save.
-        final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "MyDir" + File.separator);
-        root.mkdirs();
-        final String fname = "temp.jpg";
-        final File sdImageMainDirectory = new File(root, fname);
-        _imageUri = Uri.fromFile(sdImageMainDirectory);
+        setTempPicOutputUri();
 
         // Camera.
         final List<Intent> cameraIntents = new ArrayList<Intent>();
@@ -137,43 +136,45 @@ public class NewContactActivity extends AppCompatActivity {
         startActivityForResult(chooserIntent, PICTURE_REQUEST_CODE);
     }
 
+    private void setTempPicOutputUri() {
+        final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "MyDir" + File.separator);
+        root.mkdirs();
+        final String fname = "temp"+ UUID.randomUUID().toString().substring(0,4)+".jpg";
+        final File sdImageMainDirectory = new File(root, fname);
+        _imageUri = Uri.fromFile(sdImageMainDirectory);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            if (requestCode == PICTURE_REQUEST_CODE) {
-                final boolean isCamera;
-                if (data == null) {
-                    isCamera = true;
+        if (requestCode == PICTURE_REQUEST_CODE) {
+            final boolean isCamera;
+            if (data == null) {
+                isCamera = true;
+            } else {
+                final String action = data.getAction();
+                if (action == null) {
+                    isCamera = false;
                 } else {
-                    final String action = data.getAction();
-                    if (action == null) {
-                        isCamera = false;
-                    } else {
-                        isCamera = action.equals(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    }
+                    isCamera = action.equals(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 }
-                if (!isCamera) {
-                    _imageUri = data.getData();
-                }
-                Crop.of(_imageUri, _imageUri).asSquare().start(this);
-            } else if (requestCode == Crop.REQUEST_CROP) {
-                loadImage();
             }
+            Uri currentUri = _imageUri;
+            if (!isCamera) {
+                currentUri = data.getData();
+            }
+            setTempPicOutputUri();
+            Crop.of(currentUri, _imageUri).asSquare().start(this);
+        } else if (requestCode == Crop.REQUEST_CROP && resultCode == RESULT_OK) {
+            loadImage();
         }
     }
 
     private void loadImage() {
-        Glide.with(this).load(_imageUri).asBitmap().listener(new RequestListener<Uri, Bitmap>() {
+        Glide.with(this).load(_imageUri).asBitmap().into(new BitmapImageViewTarget(_pictureView) {
             @Override
-            public boolean onException(Exception e, Uri model, Target<Bitmap> target, boolean isFirstResource) {
-                return false;
-            }
-
-            @Override
-            public boolean onResourceReady(Bitmap resource, Uri model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                _pictureView.setImageBitmap(resource);
+            protected void setResource(Bitmap resource) {
                 _bitmap = resource;
-                return true;
+                super.setResource(resource);
             }
         });
     }
@@ -182,7 +183,16 @@ public class NewContactActivity extends AppCompatActivity {
         setFeilds();
         return validateFirstName() &&
                 validateLastName() &&
-                validatePhone();
+                validatePhone() &&
+                validatePicture();
+    }
+
+    private boolean validatePicture() {
+        if(_bitmap == null) {
+            Toast.makeText(this,"Please upload a picture",Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
     }
 
     private void setFeilds() {
@@ -197,16 +207,20 @@ public class NewContactActivity extends AppCompatActivity {
         if(_firstName == null || _firstName.length() < 3) {
             _firstNameView.setError("Please set proper first name > 3 charecters");
             return false;
+        } else {
+            _firstNameView.setErrorEnabled(false);
+            return true;
         }
-        return true;
     }
 
     private boolean validateLastName() {
         if(_lastName == null || _lastName.length() < 3) {
             _lastNameView.setError("Please set proper last name > 3 charecters");
             return false;
+        } else {
+            _lastNameView.setErrorEnabled(false);
+            return true;
         }
-        return true;
     }
 
 
@@ -214,8 +228,10 @@ public class NewContactActivity extends AppCompatActivity {
         if(!isValidPhoneNumber()) {
             _phoneView.setError("Please set proper phone number");
             return false;
+        } else {
+            _phoneView.setErrorEnabled(false);
+            return true;
         }
-        return true;
     }
 
     private boolean isValidPhoneNumber() {

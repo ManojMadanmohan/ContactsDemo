@@ -28,8 +28,8 @@
             android:layout_height="wrap_content"
             android:padding="32dp">
             <FrameLayout
-                android:layout_width="96dp"
-                android:layout_height="96dp"
+                android:layout_width="144dp"
+                android:layout_height="144dp"
                 android:layout_marginTop="32dp"
                 android:id="@+id/new_contact_pic_layout"
                 android:layout_centerHorizontal="true">
@@ -37,24 +37,27 @@
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:layout_height="match_parent"
                     android:layout_width="match_parent"
-                    android:layout_margin="4dp"
+                    android:layout_margin="8dp"
                     app:civ_border_color="@color/red"
                     app:civ_border_width="2dp"
+                    android:src="@drawable/contacts_placeholder"
                     android:id="@+id/new_contact_pic"/>
                 <android.support.design.widget.FloatingActionButton
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:elevation="4dp"
+                    app:fabSize="mini"
                     android:layout_gravity="bottom|end"
-                    android:backgroundTint="@color/white"
+                    app:backgroundTint="@color/white"
                     android:src="@drawable/ic_edit_black_24dp"
-                    android:layout_alignBottom="@id/new_contact_pic"/>
+                    />
             </FrameLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_below="@id/new_contact_pic_layout"
                 android:id="@+id/new_contact_first_name"
                 android:layout_marginTop="16dp"
-                android:theme="@style/TextLabel"
+                android:textColorHint="@color/new_contact_theme"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -69,7 +72,7 @@
                 android:layout_below="@id/new_contact_first_name"
                 android:id="@+id/new_contact_last_name"
                 android:layout_marginTop="4dp"
-                android:theme="@style/TextLabel"
+                android:textColorHint="@color/new_contact_theme"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -83,8 +86,8 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_below="@id/new_contact_last_name"
                 android:id="@+id/new_contact_number"
+                android:textColorHint="@color/new_contact_theme"
                 android:layout_marginTop="4dp"
-                android:theme="@style/TextLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -100,7 +103,7 @@
                 android:layout_below="@id/new_contact_number"
                 android:id="@+id/new_contact_email"
                 android:layout_marginTop="4dp"
-                android:theme="@style/TextLabel"
+                android:textColorHint="@color/new_contact_theme"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
