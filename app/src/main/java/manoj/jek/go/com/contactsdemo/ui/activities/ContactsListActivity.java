@@ -1,5 +1,6 @@
 package manoj.jek.go.com.contactsdemo.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -71,6 +72,12 @@ public class ContactsListActivity extends AppCompatActivity {
         //Need this to get recylcer view to work. Android is frustrating.
         _recyclerView.setLayoutManager(new LinearLayoutManager(this));
         initSubscription();
+        findViewById(R.id.contact_list_fab).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(ContactsListActivity.this, NewContactActivity.class));
+            }
+        });
     }
 
     private void initSubscription() {
