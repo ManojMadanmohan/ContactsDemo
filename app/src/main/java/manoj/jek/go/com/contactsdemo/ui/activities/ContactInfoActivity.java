@@ -2,6 +2,7 @@ package manoj.jek.go.com.contactsdemo.ui.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -113,13 +114,19 @@ public class ContactInfoActivity extends AppCompatActivity {
         _numberView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //call number
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:"+_contact.getNumber()));
+                startActivity(callIntent);
             }
         });
         _emailView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //email user
+                Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                emailIntent.setData(Uri.parse("mailto:"));
+                emailIntent.setType("text/plain");
+                emailIntent.putExtra(Intent.EXTRA_EMAIL  , new String[]{_contact.getEmail()});
+                startActivity(emailIntent);
             }
         });
         _favView.setOnClickListener(new View.OnClickListener() {
