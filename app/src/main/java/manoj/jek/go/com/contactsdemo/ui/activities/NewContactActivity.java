@@ -127,7 +127,6 @@ public class NewContactActivity extends AppCompatActivity {
 
         // Add the camera options.
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
-
         startActivityForResult(chooserIntent, PICTURE_REQUEST_CODE);
     }
 
