@@ -30,7 +30,7 @@
             <FrameLayout
                 android:layout_width="96dp"
                 android:layout_height="96dp"
-                android:layout_marginTop="64dp"
+                android:layout_marginTop="32dp"
                 android:id="@+id/new_contact_pic_layout"
                 android:layout_centerHorizontal="true">
 
@@ -115,10 +115,12 @@
                 android:layout_height="40dp"
                 android:background="@color/new_contact_theme"
                 android:text="SAVE"
+                android:elevation="8dp"
                 android:textColor="@color/white"
                 android:layout_below="@id/new_contact_email"
                 android:layout_alignParentRight="true"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="8dp"
+                android:id="@+id/new_contact_save" />
         </RelativeLayout>
     </ScrollView>
 </LinearLayout>
