@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.activeandroid.ActiveAndroid;
@@ -46,6 +47,10 @@ public class ContactsListActivity extends AppCompatActivity {
 
     @BindView(R.id.recycler_view)
     public RecyclerView _recyclerView;
+    @BindView(R.id.error_view)
+    public View _errorView;
+    @BindView(R.id.retry)
+    public Button _retryButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +63,7 @@ public class ContactsListActivity extends AppCompatActivity {
         _single = Single.fromCallable(new Callable<List<Contact>>() {
             @Override
             public List<Contact> call() throws Exception {
+                if(_adapter == null || _adapter.getItemCount() == 0) findViewById(R.id.progress_wheel).setVisibility(View.VISIBLE);
                 return ContactsFeature.getInstance().fetchAllContactsSync(ContactsListActivity.this);
             }
         });
@@ -82,7 +88,8 @@ public class ContactsListActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(List<Contact> value) {
                         findViewById(R.id.progress_wheel).setVisibility(View.GONE);
-                        _recyclerView.setAdapter(new ContactsViewAdapter(ContactsListActivity.this, value));
+                        _adapter.updateContacts(value);
+                        _recyclerView.setAdapter(_adapter);
                         _recyclerView.invalidate();
                     }
 
@@ -90,8 +97,21 @@ public class ContactsListActivity extends AppCompatActivity {
                     public void onError(Throwable error) {
                         Toast.makeText(ContactsListActivity.this, "got error!!", Toast.LENGTH_LONG).show();
                         error.printStackTrace();
+                        findViewById(R.id.progress_wheel).setVisibility(View.GONE);
+                        showErrorView();
                     }
                 });
+    }
+
+    private void showErrorView() {
+        _errorView.setVisibility(View.VISIBLE);
+        _retryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                _errorView.setVisibility(View.GONE);
+                initSubscription();
+            }
+        });
     }
 
     @Override

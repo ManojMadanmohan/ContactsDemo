@@ -25,6 +25,11 @@
         wheel:matProg_barColor="@color/blue"
         android:layout_centerInParent="true"
         wheel:matProg_progressIndeterminate="true" />
+    <include
+        layout="@layout/error_retry"
+        android:visibility="gone"
+        android:id="@+id/error_view"
+        />
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
