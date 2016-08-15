@@ -10,11 +10,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.activeandroid.query.Select;
 import com.bumptech.glide.Glide;
 
-import java.util.List;
 import java.util.concurrent.Callable;
 
 import butterknife.BindView;
@@ -22,6 +22,7 @@ import butterknife.ButterKnife;
 import manoj.jek.go.com.contactsdemo.R;
 import manoj.jek.go.com.contactsdemo.ui.models.Contact;
 import manoj.jek.go.com.contactsdemo.ui.network.Utils;
+import rx.Observable;
 import rx.Single;
 import rx.SingleSubscriber;
 import rx.Subscription;
@@ -31,7 +32,8 @@ import rx.schedulers.Schedulers;
 public class ContactInfoActivity extends AppCompatActivity {
 
     private Contact _contact;
-    private Single<Contact> _single;
+    private Single<Contact> _fetchObservable;
+    private Single<Contact> _updateObservable;
     private Subscription _subscription;
 
     @BindView(R.id.contact_info_name)
@@ -66,11 +68,11 @@ public class ContactInfoActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        loadContact(_contact.getRemoteId());
+        createSingle(_contact.getRemoteId());
     }
 
-    private void loadContact(final int id) {
-        _single = Single.fromCallable(new Callable<Contact>() {
+    private void createSingle(final int id) {
+        _fetchObservable = Single.fromCallable(new Callable<Contact>() {
             @Override
             public Contact call() throws Exception {
                 if(Utils.isNetworkAvailable(ContactInfoActivity.this)) {
@@ -84,10 +86,21 @@ public class ContactInfoActivity extends AppCompatActivity {
         });
     }
 
+    private Single<Contact> createUpdateSingle(final Contact contact) {
+        return Single.fromCallable(new Callable<Contact>() {
+            @Override
+            public Contact call() throws Exception {
+                Contact contactUpdated = Utils.getContactsService().updateContact(String.valueOf(contact.getRemoteId()), contact).execute().body();
+                contactUpdated.save();
+                return contactUpdated;
+            }
+        });
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
-        _subscription = _single.subscribeOn(Schedulers.io())
+        _subscription = _fetchObservable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleSubscriber<Contact>() {
                     @Override
@@ -109,9 +122,10 @@ public class ContactInfoActivity extends AppCompatActivity {
         setTextViewText(_nameView, Utils.capitalizeName(_contact.getFirstName(), _contact.getLastName()));
         setTextViewText(_emailView, _contact.getEmail());
         setTextViewText(_numberView, _contact.getNumber());
+        _favIcon.setImageResource(_contact.getIsFavorite() ? R.drawable.ic_favorite_black_24px : R.drawable.ic_favorite_border_black_24px);
         setListeners();
         Glide.with(this).load(_contact.getProfilePictureUrl()).placeholder(R.drawable.contacts_placeholder)
-        .into((ImageView) _pictureView);
+        .into( _pictureView);
     }
 
     private void setListeners() {
@@ -136,7 +150,24 @@ public class ContactInfoActivity extends AppCompatActivity {
         _favIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //mark fav
+                _favIcon.setImageResource(R.drawable.ic_favorite_black_24px);
+                Toast.makeText(ContactInfoActivity.this, "updating contact...", Toast.LENGTH_LONG).show();
+                _contact.makeFavorite();
+                _updateObservable = createUpdateSingle(_contact);
+                _updateObservable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new SingleSubscriber<Contact>() {
+                            @Override
+                            public void onSuccess(Contact value) {
+                                _contact = value;
+                                setupView();
+                                Toast.makeText(ContactInfoActivity.this, "Updated contact successfully", Toast.LENGTH_LONG).show();
+                            }
+
+                            @Override
+                            public void onError(Throwable error) {
+                                Toast.makeText(ContactInfoActivity.this, "Could not update contact, Please try again later", Toast.LENGTH_LONG).show();
+                            }
+                        });
             }
         });
         _pictureView.setOnClickListener(new View.OnClickListener() {
