@@ -40,10 +40,14 @@ public class ContactInfoActivity extends AppCompatActivity {
     TextView _numberView;
     @BindView(R.id.contact_info_email)
     TextView _emailView;
-    @BindView(R.id.contact_info_fav)
-    ImageView _favView;
     @BindView(R.id.contact_info_pic)
     ImageView _pictureView;
+    @BindView(R.id.contact_info_fav)
+    ImageView _favIcon;
+    @BindView(R.id.contact_info_call_icon)
+    ImageView _phoneIcon;
+    @BindView(R.id.contact_info_sms_icon)
+    ImageView _smsIcon;
 
     public static final String KEY_CONTACT_EXTRA = "contact";
 
@@ -111,7 +115,7 @@ public class ContactInfoActivity extends AppCompatActivity {
     }
 
     private void setListeners() {
-        _numberView.setOnClickListener(new View.OnClickListener() {
+        _phoneIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent callIntent = new Intent(Intent.ACTION_CALL);
@@ -129,7 +133,7 @@ public class ContactInfoActivity extends AppCompatActivity {
                 startActivity(emailIntent);
             }
         });
-        _favView.setOnClickListener(new View.OnClickListener() {
+        _favIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //mark fav
@@ -139,6 +143,15 @@ public class ContactInfoActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //zoom picture, LATER
+            }
+        });
+        _smsIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                sendIntent.putExtra("address"  , _contact.getNumber());
+                sendIntent.setType("vnd.android-dir/mms-sms");
+                startActivity(sendIntent);
             }
         });
     }
