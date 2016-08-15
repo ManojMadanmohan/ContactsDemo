@@ -35,10 +35,17 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import manoj.jek.go.com.contactsdemo.R;
+import manoj.jek.go.com.contactsdemo.ui.models.Contact;
+import manoj.jek.go.com.contactsdemo.ui.network.Utils;
+import rx.Single;
+import rx.SingleSubscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 public class NewContactActivity extends AppCompatActivity {
@@ -256,6 +263,34 @@ public class NewContactActivity extends AppCompatActivity {
 
     private void saveContact() {
         Toast.makeText(this, "Make call to save this contact!", Toast.LENGTH_LONG).show();
+        final Contact contact = new Contact((int)(Math.random()*1000), _firstName, _lastName, _email, _phoneNumber, "http://google.com", false);
+        Single<Contact> single = Single.fromCallable(new Callable<Contact>() {
+
+            @Override
+            public Contact call() throws Exception {
+                Contact finalContact = Utils.getContactsService().addContact(contact).execute().body();
+                finalContact.save();
+                return finalContact;
+            }
+        });
+
+        findViewById(R.id.progress_wheel).setVisibility(View.VISIBLE);
+        single.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleSubscriber<Contact>() {
+                    @Override
+                    public void onSuccess(Contact value) {
+                        Toast.makeText(NewContactActivity.this, "Successfully uploaded!", Toast.LENGTH_LONG).show();
+                        findViewById(R.id.progress_wheel).setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onError(Throwable error) {
+                        error.printStackTrace();
+                        Toast.makeText(NewContactActivity.this, "Error while adding contact!", Toast.LENGTH_LONG).show();
+                        findViewById(R.id.progress_wheel).setVisibility(View.GONE);
+                    }
+                });
     }
 
 

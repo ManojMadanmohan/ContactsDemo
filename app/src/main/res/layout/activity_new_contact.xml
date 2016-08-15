@@ -125,6 +125,16 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginTop="8dp"
                 android:id="@+id/new_contact_save" />
+
+            <com.pnikosis.materialishprogress.ProgressWheel
+                android:id="@+id/progress_wheel"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
+                wheel:matProg_barColor="@color/blue"
+                android:layout_centerInParent="true"
+                android:visibility="gone"
+                wheel:matProg_progressIndeterminate="true" />
         </RelativeLayout>
     </ScrollView>
 </LinearLayout>
