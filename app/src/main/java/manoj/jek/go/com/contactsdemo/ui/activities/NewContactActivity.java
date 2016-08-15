@@ -14,10 +14,12 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -54,6 +56,11 @@ public class NewContactActivity extends AppCompatActivity {
 
     private Uri _imageUri;
     private Bitmap _bitmap;
+
+    private String _firstName;
+    private String _lastName;
+    private String _email;
+    private String _phoneNumber;
 
     private static final int PICTURE_REQUEST_CODE = 101;
 
@@ -172,11 +179,59 @@ public class NewContactActivity extends AppCompatActivity {
     }
 
     private boolean validate() {
-        return false;
+        setFeilds();
+        return validateFirstName() &&
+                validateLastName() &&
+                validatePhone();
+    }
+
+    private void setFeilds() {
+        _firstName = _firstNameView.getEditText().getText().toString();
+        _lastName = _lastNameView.getEditText().getText().toString();
+        _phoneNumber = _phoneView.getEditText().getText().toString();
+        _email = _emailView.getEditText().getText().toString();
+        if(_email == null) { _email = ""; }
+    }
+
+    private boolean validateFirstName() {
+        if(_firstName == null || _firstName.length() < 3) {
+            _firstNameView.setError("Please set proper first name > 3 charecters");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateLastName() {
+        if(_lastName == null || _lastName.length() < 3) {
+            _lastNameView.setError("Please set proper last name > 3 charecters");
+            return false;
+        }
+        return true;
+    }
+
+
+    private boolean validatePhone() {
+        if(!isValidPhoneNumber()) {
+            _phoneView.setError("Please set proper phone number");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isValidPhoneNumber() {
+        //In PROD, construct and use a valid Regex after consultation from a domain expert who can explain the kind of phone numbers expected
+        if(_phoneNumber == null || _phoneNumber.length() < 10 || _phoneNumber.length() > 14) {
+            return false;
+        }
+        String regexStr = "^[0-9\\-\\+]*$";
+        if(!_phoneNumber.matches(regexStr)) {
+            return false;
+        }
+        return true;
     }
 
     private void saveContact() {
-
+        Toast.makeText(this, "Make call to save this contact!", Toast.LENGTH_LONG).show();
     }
 
 
