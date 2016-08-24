@@ -41,6 +41,11 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".ui.activities.ZoomImageActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"></activity>
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
     </application>
 

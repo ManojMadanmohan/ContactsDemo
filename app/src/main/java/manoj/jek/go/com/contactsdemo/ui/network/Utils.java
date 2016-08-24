@@ -4,6 +4,7 @@ package manoj.jek.go.com.contactsdemo.ui.network;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 
 import manoj.jek.go.com.contactsdemo.ui.models.Contact;
 import okhttp3.OkHttpClient;
@@ -51,5 +52,13 @@ public class Utils {
                 = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public static boolean isLollipopOrAbove() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

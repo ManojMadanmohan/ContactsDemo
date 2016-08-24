@@ -119,6 +119,12 @@ public class ContactInfoActivity extends AppCompatActivity {
         setListeners();
         Glide.with(this).load(_contact.getProfilePictureUrl()).placeholder(R.drawable.contacts_placeholder)
         .into( _pictureView);
+        _pictureView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ZoomImageActivity.launch(ContactInfoActivity.this, _contact.getProfilePictureUrl(), _pictureView);
+            }
+        });
     }
 
     private void setListeners() {
