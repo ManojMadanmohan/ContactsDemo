@@ -37,6 +37,8 @@ import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import xyz.danoz.recyclerviewfastscroller.sectionindicator.title.SectionTitleIndicator;
+import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
 public class ContactsListActivity extends AppCompatActivity {
 
@@ -51,6 +53,8 @@ public class ContactsListActivity extends AppCompatActivity {
     public View _errorView;
     @BindView(R.id.retry)
     public Button _retryButton;
+    @BindView(R.id.fast_scroller)
+    public VerticalRecyclerViewFastScroller _fastScroller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +83,9 @@ public class ContactsListActivity extends AppCompatActivity {
                 startActivity(new Intent(ContactsListActivity.this, NewContactActivity.class));
             }
         });
+        _fastScroller.setRecyclerView(_recyclerView);
+        _recyclerView.addOnScrollListener(_fastScroller.getOnScrollListener());
+        _fastScroller.setSectionIndicator((SectionTitleIndicator)findViewById(R.id.fast_scroller_section_title_indicator));
     }
 
     private void initSubscription() {

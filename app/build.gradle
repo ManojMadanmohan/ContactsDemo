@@ -52,4 +52,5 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.pnikosis:materialish-progress:1.7'
     compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
+    compile 'xyz.danoz:recyclerviewfastscroller:0.1.3'
 }
