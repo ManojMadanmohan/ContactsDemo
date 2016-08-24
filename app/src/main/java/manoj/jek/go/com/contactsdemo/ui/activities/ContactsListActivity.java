@@ -98,6 +98,9 @@ public class ContactsListActivity extends AppCompatActivity {
                         _adapter.updateContacts(value);
                         _recyclerView.setAdapter(_adapter);
                         _recyclerView.invalidate();
+                        if(value.size() == 0) {
+                            findViewById(R.id.empty_view).setVisibility(View.GONE);
+                        }
                     }
 
                     @Override
