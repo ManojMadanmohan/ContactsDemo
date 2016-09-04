@@ -5,6 +5,9 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 
 import manoj.jek.go.com.contactsdemo.ui.models.Contact;
 import okhttp3.OkHttpClient;
@@ -37,14 +40,11 @@ public class Utils {
         {
             return " - ";
         }
-        String rawName = firstName + " " + lastName;
-        String output = "";
-        for(String part: rawName.split(" "))
-        {
-            part = part.substring(0,1).toUpperCase() + part.substring(1, part.length()).toLowerCase();
-            output = output + part + " ";
-        }
-        return output;
+        String formattedFirstName = firstName;
+        String formattedLastName = lastName;
+        if(formattedFirstName.length() > 1) formattedFirstName = formattedFirstName.substring(0,1).toUpperCase() + formattedFirstName.substring(1);
+        if(formattedLastName.length() > 1) formattedLastName = formattedLastName.substring(0,1).toUpperCase() + formattedLastName.substring(1);
+        return formattedFirstName + " " + formattedLastName;
     }
 
     public static boolean isNetworkAvailable(Context context) {
@@ -60,5 +60,18 @@ public class Utils {
         } else {
             return false;
         }
+    }
+
+    public static SpannableStringBuilder colorPartialString(String parentText, String match, int color) {
+        int startPos =  parentText.toLowerCase().indexOf(match.toLowerCase());
+        return colorPartialString(parentText, startPos, match.length(), color);
+    }
+
+    public static SpannableStringBuilder colorPartialString(String text, int startPos, int length, int color) {
+        SpannableStringBuilder builder = new SpannableStringBuilder();
+        SpannableString spannable = new SpannableString(text);
+        spannable.setSpan(new ForegroundColorSpan(color), startPos, startPos + length, 0);
+        builder.append(spannable);
+        return builder;
     }
 }
