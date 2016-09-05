@@ -15,7 +15,7 @@
         android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:elevation="10dp"
+        android:elevation="9dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"/>
 
