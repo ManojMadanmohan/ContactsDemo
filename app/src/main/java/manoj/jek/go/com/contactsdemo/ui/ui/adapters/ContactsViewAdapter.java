@@ -39,6 +39,7 @@ public class ContactsViewAdapter extends RecyclerView.Adapter<ContactsViewAdapte
     private CharSequence [] _sections;
     private Map<CharSequence, Integer> _sectionPosMap;
     private String _searchString;
+    private ContactClickListener _clickListener;
 
     @Override
     public Object[] getSections() {
@@ -153,14 +154,14 @@ public class ContactsViewAdapter extends RecyclerView.Adapter<ContactsViewAdapte
     }
 
     @Override
-    public void onBindViewHolder(ContactsViewHolder holder, int position) {
+    public void onBindViewHolder(final ContactsViewHolder holder, int position) {
         final Contact contact = _resultContactSummaries.get(position);
         Glide.with(_context).load(contact.getProfilePictureUrl()).placeholder(R.drawable.contacts_placeholder).into(holder._picView);
         holder._charecterView.setText(getCharecterToShow(position));
         holder._rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ContactInfoActivity.launch(contact,  _context);
+                if(_clickListener != null) _clickListener.onContactClicked(contact, holder._rootView);
             }
         });
         String name = Utils.capitalizeName(contact.getFirstName(), contact.getLastName());
@@ -170,6 +171,10 @@ public class ContactsViewAdapter extends RecyclerView.Adapter<ContactsViewAdapte
     @Override
     public int getItemCount() {
         return _resultContactSummaries.size();
+    }
+
+    public void setClickListener(ContactClickListener clickListener) {
+        _clickListener = clickListener;
     }
 
     public void updateContacts(List<Contact> summaryList) {
@@ -204,5 +209,9 @@ public class ContactsViewAdapter extends RecyclerView.Adapter<ContactsViewAdapte
         ImageSpan span = new ImageSpan(d, ImageSpan.ALIGN_BASELINE);
         ss.setSpan(span, 0, 3, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
         return ss;
+    }
+
+    public interface ContactClickListener {
+        public void onContactClicked(Contact contact, View rootView);
     }
 }

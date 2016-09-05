@@ -288,7 +288,7 @@ public class NewContactActivity extends AppCompatActivity {
                     public void onSuccess(Contact value) {
                         Toast.makeText(NewContactActivity.this, "Successfully uploaded!", Toast.LENGTH_LONG).show();
                         findViewById(R.id.progress_wheel).setVisibility(View.GONE);
-                        ContactInfoActivity.launch(value, NewContactActivity.this);
+                        ContactInfoActivity.launch(value, NewContactActivity.this, _pictureView, _firstNameView.getEditText());
                         finish();
                     }
 

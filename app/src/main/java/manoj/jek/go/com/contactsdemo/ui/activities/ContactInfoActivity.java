@@ -1,8 +1,13 @@
 package manoj.jek.go.com.contactsdemo.ui.activities;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -54,10 +59,32 @@ public class ContactInfoActivity extends AppCompatActivity {
 
     public static final String KEY_CONTACT_EXTRA = "contact";
 
+    public static final String TRANSITION_IMAGE_VIEW_NAME = "transition_image_view";
+    public static final String TRANSITION_NAME_VIEW_NAME = "transition_name_view";
+
     public static void launch(Contact contact, Context context) {
         Intent intent = new Intent(context,ContactInfoActivity.class);
         intent.putExtra(KEY_CONTACT_EXTRA, contact);
         context.startActivity(intent);
+    }
+
+    public static void launch(Contact contact, Activity activity, View imageView, View nameView) {
+        Intent intent = new Intent(activity,ContactInfoActivity.class);
+        intent.putExtra(KEY_CONTACT_EXTRA, contact);
+        if(Utils.isLollipopOrAbove()) {
+            imageView.setTransitionName(TRANSITION_IMAGE_VIEW_NAME);
+            nameView.setTransitionName(TRANSITION_NAME_VIEW_NAME);
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
+
+                    // For each shared element, add to this method a new Pair item,
+                    // which contains the reference of the view we are transitioning *from*,
+                    // and the value of the transitionName attribute
+                    new Pair<View, String>(imageView, TRANSITION_IMAGE_VIEW_NAME),
+                    new Pair<View, String>(nameView, TRANSITION_NAME_VIEW_NAME));
+            ActivityCompat.startActivity(activity, intent, options.toBundle());
+        } else {
+           activity.startActivity(intent);
+        }
     }
 
     @Override
@@ -112,6 +139,10 @@ public class ContactInfoActivity extends AppCompatActivity {
     private void setupView() {
         findViewById(R.id.progress_wheel).setVisibility(View.GONE);
         findViewById(R.id.contact_info_layout).setVisibility(View.VISIBLE);
+        if(Utils.isLollipopOrAbove()) {
+            _nameView.setTransitionName(TRANSITION_NAME_VIEW_NAME);
+            _pictureView.setTransitionName(TRANSITION_IMAGE_VIEW_NAME);
+        }
         setTextViewText(_nameView, Utils.capitalizeName(_contact.getFirstName(), _contact.getLastName()));
         setTextViewText(_emailView, _contact.getEmail());
         setTextViewText(_numberView, _contact.getNumber());

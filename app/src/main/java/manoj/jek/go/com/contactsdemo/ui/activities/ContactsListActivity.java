@@ -86,6 +86,13 @@ public class ContactsListActivity extends AppCompatActivity {
 
     private void initView() {
         _adapter = new ContactsViewAdapter(this, new ArrayList<Contact>());
+        _adapter.setClickListener(new ContactsViewAdapter.ContactClickListener() {
+            @Override
+            public void onContactClicked(Contact contact, View rootView) {
+                ContactInfoActivity.launch(contact, ContactsListActivity.this,
+                        rootView.findViewById(R.id.contact_summary_pic), rootView.findViewById(R.id.contact_summary_name));
+            }
+        });
         _recyclerView.setAdapter(_adapter);
         //Need this to get recylcer view to work. Android is frustrating.
         _recyclerView.setLayoutManager(new LinearLayoutManager(this));
